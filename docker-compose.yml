@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  afisha-bot:
+    image: 'sintaksis1331/afisha-bot:latest'
+    container_name: afisha-bot
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/afisha
+      - SPRING_DATASOURCE_USERNAME=afisha-bot
+      - SPRING_DATASOURCE_PASSWORD=afisha-bot
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - AFISHA_BOT_TOKEN=6253675703:AAE_x0aNfPnnZGo5rZ7nPxSLZ58Rwxy30co
+      - AFISHA_BOT_NAME=AfishaBot
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=afisha-bot
+      - POSTGRES_PASSWORD=afisha-bot
