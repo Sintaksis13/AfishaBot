@@ -63,5 +63,7 @@ class MessageHandler(
         const val CANCEL_REGISTER_MESSAGE = "Отменить регистрацию"
         const val EMPTY_EVENTS_MESSAGE = "К сожалению, в данный момент доступных событий нет :("
         const val ERROR_MESSAGE = "Что-то пошло не так... Попробуйте снова немного позже :("
+        const val LOGIN_MESSAGE = "Привет, введи логин и пароль через пробел, вот так: login password"
+        const val LOGIN_FAILED_MESSAGE = "Неверный логин или пароль, попробуй снова"
     }
 }

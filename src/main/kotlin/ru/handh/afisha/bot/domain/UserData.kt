@@ -16,5 +16,8 @@ class UserData(
     val fullName: String,
 
     @Column(name = "user_name")
-    val userName: String
+    val userName: String,
+
+    @Column(name = "is_admin")
+    val isAdmin: Boolean
 )

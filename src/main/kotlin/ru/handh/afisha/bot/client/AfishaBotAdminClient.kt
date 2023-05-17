@@ -5,35 +5,29 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.handh.afisha.bot.button.ButtonFactory
-import ru.handh.afisha.bot.command.CommandHandler
+import ru.handh.afisha.bot.command.AdminCommandHandler
 import ru.handh.afisha.bot.message.MessageHandler
 import ru.handh.afisha.bot.service.CallbackService
-import ru.handh.afisha.bot.service.EventService
-import ru.handh.afisha.bot.service.RegistrationService
 import ru.handh.afisha.bot.service.UserService
 
 @Component
-class AfishaBotClient(
-    @Value("\${afisha.bot.token}")
+class AfishaBotAdminClient(
+    @Value("\${afisha.bot.admin.token}")
     botToken: String,
 
-    @Value("\${afisha.bot.name}")
+    @Value("\${afisha.bot.admin.name}")
     private val botName: String,
 
-    buttonFactory: ButtonFactory,
-    eventService: EventService,
     callbackService: CallbackService,
-    registrationService: RegistrationService,
+    userService: UserService,
     messageHandler: MessageHandler,
-    userService: UserService
+    buttonFactory: ButtonFactory
 ) : TelegramLongPollingBot(botToken) {
-    private val commandHandler: CommandHandler = CommandHandler(
+    private val commandHandler: AdminCommandHandler = AdminCommandHandler(
         this,
         callbackService,
         userService,
-        registrationService,
         messageHandler,
-        eventService,
         buttonFactory
     )
 

@@ -22,6 +22,7 @@ class ButtonFactory(
     private val messageHandler: MessageHandler
 ) {
     private val startMenu: InlineKeyboardMarkup
+    private val adminStartMenu: InlineKeyboardMarkup
 
     private val upcomingEventsButton = InlineKeyboardButton("Ближайшие события")
     private val myEventsButton = InlineKeyboardButton("Мои события")
@@ -40,6 +41,7 @@ class ButtonFactory(
         )
 
         startMenu = prepareMenu(keyboard)
+        adminStartMenu = prepareMenu(listOf(listOf(upcomingEventsButton)))
     }
 
     fun createEventMenu(events: List<Event>): InlineKeyboardMarkup {
@@ -90,5 +92,9 @@ class ButtonFactory(
 
     fun getStartMenu(): InlineKeyboardMarkup {
         return startMenu
+    }
+
+    fun getAdminStartMenu(): InlineKeyboardMarkup {
+        return adminStartMenu
     }
 }

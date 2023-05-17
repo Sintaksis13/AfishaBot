@@ -27,7 +27,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
-    implementation("org.springframework.data:spring-data-relational:3.1.0")
     implementation("org.telegram:telegrambots-spring-boot-starter:6.5.0") {
         exclude("commons-codec", "commons-codec")
     }

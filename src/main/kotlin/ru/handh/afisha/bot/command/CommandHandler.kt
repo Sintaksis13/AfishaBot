@@ -1,8 +1,8 @@
 package ru.handh.afisha.bot.command
 
 import org.slf4j.LoggerFactory
+import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault
@@ -12,13 +12,14 @@ import ru.handh.afisha.bot.client.AfishaBotClient
 import ru.handh.afisha.bot.domain.Callback
 import ru.handh.afisha.bot.domain.Registration
 import ru.handh.afisha.bot.message.MessageHandler
+import ru.handh.afisha.bot.message.MessageSender
 import ru.handh.afisha.bot.service.CallbackService
 import ru.handh.afisha.bot.service.EventService
 import ru.handh.afisha.bot.service.RegistrationService
 import ru.handh.afisha.bot.service.UserService
 
 class CommandHandler(
-    private val client: AfishaBotClient,
+    client: TelegramLongPollingBot,
     private val callbackService: CallbackService,
     private val userService: UserService,
     private val registrationService: RegistrationService,
@@ -27,6 +28,12 @@ class CommandHandler(
     private val buttonFactory: ButtonFactory
 ) {
     private val log = LoggerFactory.getLogger(AfishaBotClient::class.java)
+
+    private val messageSender = MessageSender(
+        client,
+        messageHandler,
+        buttonFactory
+    )
 
     init {
         try {
@@ -109,7 +116,7 @@ class CommandHandler(
             null
         )
 
-        sendMessage(message)
+        messageSender.sendMessage(message)
     }
 
     private fun sendStartMenu(chatId: Long, fullName: String) {
@@ -119,7 +126,7 @@ class CommandHandler(
             buttonFactory.getStartMenu()
         )
 
-        sendMessage(message)
+        messageSender.sendMessage(message)
     }
 
     private fun sendHelpText(chatId: Long) {
@@ -129,7 +136,7 @@ class CommandHandler(
             buttonFactory.getStartMenu()
         )
 
-        sendMessage(message)
+        messageSender.sendMessage(message)
     }
 
     private fun sendUpcomingEvents(chatId: Long, userName: String) {
@@ -149,7 +156,7 @@ class CommandHandler(
             eventMenu
         )
 
-        sendMessage(message)
+        messageSender.sendMessage(message)
     }
 
     private fun sendMyEvents(chatId: Long, userName: String) {
@@ -164,14 +171,14 @@ class CommandHandler(
             )
         )
 
-        sendMessage(message)
+        messageSender.sendMessage(message)
     }
 
     private fun sendEventDetails(chatId: Long, eventId: Long?, userName: String) {
         val event = eventService.getEventById(eventId ?: throw IllegalArgumentException())
         event.ifPresentOrElse(
             {
-                sendMessage(
+                messageSender.sendMessage(
                     messageHandler.prepareMessage(
                         chatId,
                         messageHandler.prepareEventDescription(it),
@@ -180,28 +187,9 @@ class CommandHandler(
                 )
             },
             {
-                sendErrorMessage(chatId)
+                messageSender.sendErrorMessage(chatId)
             }
         )
-    }
-
-    private fun sendErrorMessage(chatId: Long) {
-        val errorMessage = messageHandler.prepareMessage(
-            chatId,
-            MessageHandler.ERROR_MESSAGE,
-            buttonFactory.getStartMenu()
-        )
-
-        sendMessage(errorMessage)
-    }
-
-    private fun sendMessage(message: SendMessage) {
-        try {
-            client.execute(message)
-            log.info("Message sent, $message")
-        } catch (e: TelegramApiException) {
-            log.error("Error occurred while message=$message sending: ${e.message}")
-        }
     }
 
     companion object {

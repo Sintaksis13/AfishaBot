@@ -9,7 +9,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
 @Component
-class AfishaBotClientInitializer(private val client: AfishaBotClient) {
+class AfishaBotClientInitializer(
+    private val client: AfishaBotClient,
+    private val adminClient: AfishaBotAdminClient
+) {
     private val logger = LoggerFactory.getLogger(AfishaBotClientInitializer::class.java)
 
     @EventListener(ContextRefreshedEvent::class)
@@ -17,6 +20,9 @@ class AfishaBotClientInitializer(private val client: AfishaBotClient) {
         try {
             val api = TelegramBotsApi(DefaultBotSession::class.java)
             api.registerBot(client)
+
+            val adminApi = TelegramBotsApi(DefaultBotSession::class.java)
+            adminApi.registerBot(adminClient)
         } catch (e: TelegramApiException) {
             logger.error("Error occurred: ${e.message}")
         }
