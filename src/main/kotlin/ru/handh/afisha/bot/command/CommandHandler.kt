@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.handh.afisha.bot.button.ButtonFactory
 import ru.handh.afisha.bot.client.AfishaBotClient
 import ru.handh.afisha.bot.domain.Callback
+import ru.handh.afisha.bot.domain.Event
 import ru.handh.afisha.bot.domain.Registration
 import ru.handh.afisha.bot.message.MessageHandler
 import ru.handh.afisha.bot.message.MessageSender
@@ -18,7 +19,7 @@ import ru.handh.afisha.bot.service.EventService
 import ru.handh.afisha.bot.service.RegistrationService
 import ru.handh.afisha.bot.service.UserService
 
-class CommandHandler(
+open class CommandHandler(
     client: TelegramLongPollingBot,
     private val callbackService: CallbackService,
     private val userService: UserService,
@@ -63,7 +64,7 @@ class CommandHandler(
         }
     }
 
-    private fun handleCommand(
+    open fun handleCommand(
         text: String,
         chatId: Long,
         userName: String
@@ -87,7 +88,7 @@ class CommandHandler(
         }
     }
 
-    private fun handleCommand(
+    open fun handleCommand(
         callback: Callback,
         chatId: Long,
         userName: String
@@ -102,6 +103,7 @@ class CommandHandler(
                 registrationService.register(userName, chatId, callback.eventId!!)
                 sendMyEvents(chatId, userName)
             }
+
             Callback.CANCEL_REGISTRATION -> {
                 registrationService.cancelRegistration(userName, callback.eventId!!)
                 sendMyEvents(chatId, userName)
@@ -144,9 +146,10 @@ class CommandHandler(
         val registrationsForUser = registrationService.getRegistrationsForUser(userName)
         val upcomingEvents = eventService.getUpcomingEvents()
         val availableUpcomingEvent = upcomingEvents.filter {
-            it.id !in registrationsForUser.map(Registration::eventId)
+            it.id !in registrationsForUser.map(Registration::eventId) || userService.isAdminLoggedIn(userName)
         }.filter {
             it.availableSeats > registrationService.getRegistrationsCountForEvent(it.id!!)
+                    || userService.isAdminLoggedIn(userName)
         }
 
         val eventMenu = buttonFactory.createEventMenu(availableUpcomingEvent)
@@ -190,6 +193,22 @@ class CommandHandler(
                 messageSender.sendErrorMessage(chatId)
             }
         )
+    }
+
+    fun sendEventChanged(chatId: Long, event: Event, isDeleted: Boolean = false) {
+        val messageText = if (isDeleted) {
+            MessageHandler.EVENT_DELETED_MESSAGE
+        } else {
+            messageHandler.prepareEventChanged(event.name)
+        }
+
+        val message = messageHandler.prepareMessage(
+            chatId,
+            messageText,
+            buttonFactory.createChangedEventMenu(event, isDeleted)
+        )
+
+        messageSender.sendMessage(message)
     }
 
     companion object {

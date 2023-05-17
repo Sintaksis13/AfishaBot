@@ -12,13 +12,13 @@ class RegistrationService(
         userName: String,
         chatId: Long,
         eventId: Long
-    ) {
-        registrationRepository.save(Registration(
+    ): Registration = registrationRepository.save(
+        Registration(
             userName = userName,
             eventId = eventId,
             chatId = chatId
-        ))
-    }
+        )
+    )
 
     fun cancelRegistration(
         userName: String,
@@ -29,12 +29,15 @@ class RegistrationService(
         }
     }
 
-    fun getRegistrationsForUser(userName: String): List<Registration> {
-        return registrationRepository.findAllByUserName(userName)
-    }
+    fun getRegistrationsForUser(userName: String): List<Registration> =
+        registrationRepository.findAllByUserName(userName)
 
-    fun getRegistrationsCountForEvent(eventId: Long): Int {
-        return registrationRepository.findEventRegistrationsCount(eventId)
+    fun getRegistrationsCountForEvent(eventId: Long): Int = registrationRepository.findEventRegistrationsCount(eventId)
+
+    fun getRegistrationsForEvent(eventId: Long): List<Registration> = registrationRepository.findAllByEventId(eventId)
+
+    fun deleteRegistrationsForEvent(eventId: Long) {
+        registrationRepository.deleteAllByEventId(eventId)
     }
 
     fun isUserRegistered(eventId: Long, userName: String): Boolean =

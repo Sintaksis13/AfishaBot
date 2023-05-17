@@ -9,10 +9,10 @@ import ru.handh.afisha.bot.repository.UserRepository
 class UserService(
     private val userRepository: UserRepository,
 
-    @Value("afisha.bot.admin.login")
+    @Value("\${afisha.bot.admin.login}")
     private val adminLogin: String,
 
-    @Value("afisha.bot.admin.password")
+    @Value("\${afisha.bot.admin.password}")
     private val adminPassword: String
 ) {
     fun isUserExists(userName: String): Boolean {
@@ -28,6 +28,8 @@ class UserService(
         return userRepository.findByUserName(userName).map(UserData::fullName)
             .orElse("Незнакомый человек")
     }
+
+    fun getUsersByUserNames(userNames: List<String>): List<UserData> = userRepository.findAllByUserNameIn(userNames)
 
     fun saveUser(userName: String, userFullName: String) {
         userRepository.save(

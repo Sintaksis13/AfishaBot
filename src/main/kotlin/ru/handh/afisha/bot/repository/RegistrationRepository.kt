@@ -14,4 +14,6 @@ interface RegistrationRepository : JpaRepository<Registration, Long> {
 
     @Query("SELECT COUNT(id) FROM Registration WHERE eventId = :eventId")
     fun findEventRegistrationsCount(eventId: Long): Int
+
+    fun deleteAllByEventId(eventId: Long)
 }

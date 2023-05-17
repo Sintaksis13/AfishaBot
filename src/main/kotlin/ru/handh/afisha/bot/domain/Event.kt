@@ -12,10 +12,10 @@ class Event(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null,
-    val name: String,
-    val description: String?,
+    var name: String,
+    var description: String?,
     @Column(name = "time")
-    val dateTime: LocalDateTime,
+    var dateTime: LocalDateTime,
     @Column(name = "seats")
-    val availableSeats: Int
+    var availableSeats: Int
 )

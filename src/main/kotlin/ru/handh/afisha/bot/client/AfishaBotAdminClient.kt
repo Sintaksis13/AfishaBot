@@ -8,6 +8,8 @@ import ru.handh.afisha.bot.button.ButtonFactory
 import ru.handh.afisha.bot.command.AdminCommandHandler
 import ru.handh.afisha.bot.message.MessageHandler
 import ru.handh.afisha.bot.service.CallbackService
+import ru.handh.afisha.bot.service.EventService
+import ru.handh.afisha.bot.service.RegistrationService
 import ru.handh.afisha.bot.service.UserService
 
 @Component
@@ -21,13 +23,19 @@ class AfishaBotAdminClient(
     callbackService: CallbackService,
     userService: UserService,
     messageHandler: MessageHandler,
-    buttonFactory: ButtonFactory
+    buttonFactory: ButtonFactory,
+    registrationService: RegistrationService,
+    eventService: EventService,
+    afishaBotClient: AfishaBotClient
 ) : TelegramLongPollingBot(botToken) {
     private val commandHandler: AdminCommandHandler = AdminCommandHandler(
         this,
+        afishaBotClient,
         callbackService,
         userService,
+        registrationService,
         messageHandler,
+        eventService,
         buttonFactory
     )
 

@@ -6,4 +6,6 @@ import java.util.Optional
 
 interface UserRepository : JpaRepository<UserData, Long> {
     fun findByUserName(userName: String): Optional<UserData>
+
+    fun findAllByUserNameIn(usernames: List<String>): List<UserData>
 }

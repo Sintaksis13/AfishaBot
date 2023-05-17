@@ -27,7 +27,7 @@ class AfishaBotClient(
     messageHandler: MessageHandler,
     userService: UserService
 ) : TelegramLongPollingBot(botToken) {
-    private val commandHandler: CommandHandler = CommandHandler(
+    val commandHandler: CommandHandler = CommandHandler(
         this,
         callbackService,
         userService,
