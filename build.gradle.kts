@@ -30,12 +30,13 @@ dependencies {
     implementation("org.telegram:telegrambots-spring-boot-starter:6.5.0") {
         exclude("commons-codec", "commons-codec")
     }
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.5") {
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.6") {
         exclude("org.yaml", "snakeyaml")
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
     }
-    //implementation("org.postgresql:postgresql:42.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-logging:3.0.6")
+    implementation("org.postgresql:postgresql:42.6.0")
     runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
-    implementation("com.h2database:h2:2.1.214")
 }
 
 application {
@@ -49,18 +50,21 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }
-    withType<Jar> {
-        manifest {
-            attributes["Main-Class"] = application.mainClass
-        }
-
+    val myFatJar = register<Jar>("myFatJar") {
+        dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources"))
+        archiveClassifier.set("standalone")
+        isZip64 = true
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        manifest { attributes(mapOf("Main-Class" to application.mainClass)) }
+        val sourcesMain = sourceSets.main.get()
+        from(
+            configurations.runtimeClasspath.get()
+                .map { if (it.isDirectory) it else zipTree(it) } +
+                    sourcesMain.output
+        )
+    }
 
-        from(sourceSets.main.get().output)
-
-        dependsOn(configurations.runtimeClasspath)
-        from({
-            configurations.compileClasspath.get().filter { it.name.endsWith("jar") }.map {zipTree(it)}
-        })
+    build {
+        dependsOn(myFatJar)
     }
 }

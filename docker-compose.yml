@@ -2,7 +2,9 @@ version: '3'
 
 services:
   afisha-bot:
-    image: 'sintaksis1331/afisha-bot:latest'
+    #image: 'sintaksis1331/afisha-bot:latest'
+    build:
+      context: .
     container_name: afisha-bot
     depends_on:
       - db
@@ -13,6 +15,10 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - AFISHA_BOT_TOKEN=6253675703:AAE_x0aNfPnnZGo5rZ7nPxSLZ58Rwxy30co
       - AFISHA_BOT_NAME=AfishaBot
+      - AFISHA_BOT_ADMIN_TOKEN=6253818777:AAF8n_ns89FJOwGLvNrx0cmzk_PKtq6IkF4
+      - AFISHA_BOT_ADMIN_NAME=AfishaBotAdmin
+      - AFISHA_BOT_ADMIN_LOGIN=login
+      - AFISHA_BOT_ADMIN_PASSWORD=password
 
   db:
     image: 'postgres:13.1-alpine'
@@ -20,3 +26,4 @@ services:
     environment:
       - POSTGRES_USER=afisha-bot
       - POSTGRES_PASSWORD=afisha-bot
+      - POSTGRES_DB=afisha
