@@ -97,7 +97,7 @@ class ButtonFactory(
         return prepareMenu(buttons)
     }
 
-    fun createChangedEventMenu(event: Event, isDeleted: Boolean): InlineKeyboardMarkup {
+    fun createUpdatedEventMenu(event: Event, isDeleted: Boolean): InlineKeyboardMarkup {
         val buttons = mutableListOf<List<InlineKeyboardButton>>()
 
         val updatedEventInfoButton = InlineKeyboardButton(messageHandler.prepareEventShortDescription(event))

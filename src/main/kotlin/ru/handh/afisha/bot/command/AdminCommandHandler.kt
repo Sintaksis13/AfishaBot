@@ -131,11 +131,11 @@ class AdminCommandHandler(
         messageSender.sendMessage(message)
     }
 
-    private fun updateEvent(event: Event) {
+    private fun sendEventUpdatedNotification(event: Event) {
         val registrations = registrationService.getRegistrationsForEvent(event.id!!)
 
         registrations.forEach {
-            afishaBotClient.commandHandler.sendEventChanged(it.chatId, event)
+            afishaBotClient.commandHandler.sendEventUpdated(it.chatId, event)
         }
     }
 
@@ -146,7 +146,7 @@ class AdminCommandHandler(
         eventOpt.ifPresentOrElse(
             { event ->
                 registrations.forEach {
-                    afishaBotClient.commandHandler.sendEventChanged(it.chatId, event, isDeleted = true)
+                    afishaBotClient.commandHandler.sendEventUpdated(it.chatId, event, isDeleted = true)
                 }
             },
             {
@@ -222,7 +222,7 @@ class AdminCommandHandler(
                 event.availableSeats = values[4].toInt()
 
                 val updatedEvent = eventService.updateEvent(event)
-                updateEvent(updatedEvent)
+                sendEventUpdatedNotification(updatedEvent)
                 sendEventInfo(chatId, event = event)
             }
         }

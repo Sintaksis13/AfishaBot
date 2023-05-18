@@ -47,12 +47,12 @@ class MessageHandler(
 
     fun prepareWelcomeMessage(fullName: String) = "Привет, ${fullName}, добро пожаловать в Бот Афиши! Введи свои ФИО:"
 
-    fun prepareEventChanged(eventName: String) = "Событие '$eventName' изменилось! Посмотрите новые данные"
+    fun prepareEventUpdated(eventName: String) = "Событие '$eventName' изменилось! Посмотрите новые данные"
 
     fun prepareParticipantsMessage(users: List<UserData>): String {
         val builder = StringBuilder()
         users.forEach {
-            builder.append(it.userName + " " + it.fullName + "\n")
+            builder.append("${it.userName} ${it.fullName}\n")
         }
 
         return builder.toString()

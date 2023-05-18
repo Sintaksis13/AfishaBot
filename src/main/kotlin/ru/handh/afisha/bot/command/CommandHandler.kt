@@ -195,17 +195,17 @@ open class CommandHandler(
         )
     }
 
-    fun sendEventChanged(chatId: Long, event: Event, isDeleted: Boolean = false) {
+    fun sendEventUpdated(chatId: Long, event: Event, isDeleted: Boolean = false) {
         val messageText = if (isDeleted) {
             MessageHandler.EVENT_DELETED_MESSAGE
         } else {
-            messageHandler.prepareEventChanged(event.name)
+            messageHandler.prepareEventUpdated(event.name)
         }
 
         val message = messageHandler.prepareMessage(
             chatId,
             messageText,
-            buttonFactory.createChangedEventMenu(event, isDeleted)
+            buttonFactory.createUpdatedEventMenu(event, isDeleted)
         )
 
         messageSender.sendMessage(message)
